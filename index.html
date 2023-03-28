@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NLP Demo</title>
+  </head>
+  <body>
+    <h1>NLP Demo</h1>
+    <form>
+      <label for="summary">Summary:</label>
+      <br>
+      <textarea id="summary" name="summary" rows="5" cols="50"></textarea>
+      <br><br>
+      <label for="context">Context:</label>
+      <br>
+      <textarea id="context" name="context" rows="10" cols="50"></textarea>
+      <br><br>
+      <button id="process-button">Find Relevant Sentences</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+      const processButton = document.getElementById('process-button');
+      const resultDiv = document.getElementById('result');
+
+      processButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const summary = document.getElementById('summary').value;
+        const context = document.getElementById('context').value;
+
+        const response = await fetch('/process-text', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            summary: summary,
+            context: context
+          })
+        });
+
+        const data = await response.json();
+
+        resultDiv.innerHTML = `
+          <h2>Matching Sentences:</h2>
+          <ul>
+            ${data.matchingSentences.map(sentence => `<li>${sentence}</li>`).join('')}
+          </ul>
+        `;
+      });
+    </script>
+  </body>
+</html>
